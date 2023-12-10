@@ -1,44 +1,25 @@
-import { useState } from "react";
+import { createTodo, deleteTodo, toggleTodo } from "../features/todo/todoSlice";
 import "../styles.css";
 import TodosForm from "./TodosForm";
 import TodosList from "./TodosList";
+import { useSelector, useDispatch } from "react-redux";
 
 export default function Todo() {
-  const [todos, setTodos] = useState([]);
+  const todos = useSelector((state) => state.todo.todos); // state.reducer (mentioned in configureStore).variable
+  const dispatch = useDispatch();
 
   function manageTodos(action, payload) {
     switch (action) {
       case "create":
-        createTodo(payload.title);
+        dispatch(createTodo({ title: payload.title }));
         break;
       case "toggle":
-        toggleTodo(payload.id, payload.checked);
+        dispatch(toggleTodo({ id: payload.id, completed: payload.checked }));
         break;
       case "delete":
-        deleteTodo(payload.id);
+        dispatch(deleteTodo({ id: payload.id }));
         break;
     }
-  }
-
-  function createTodo(title) {
-    setTodos((currentTodos) => [
-      ...currentTodos,
-      { id: crypto.randomUUID(), title: title, completed: false },
-    ]);
-  }
-
-  function toggleTodo(id, checked) {
-    setTodos((currentTodos) => {
-      return currentTodos.map((todo) =>
-        todo.id == id ? { ...todo, completed: checked } : todo
-      );
-    });
-  }
-
-  function deleteTodo(id) {
-    setTodos((currentTodos) => {
-      return currentTodos.filter((todo) => todo.id !== id);
-    });
   }
 
   return (
